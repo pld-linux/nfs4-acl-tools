@@ -30,6 +30,8 @@ Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4.
 %package gui
 Summary:	GUI ACL utility for the Linux NFSv4 client
 Summary(pl.UTF-8):	Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4
+# code itself is BSD, but Qt enforces GPL
+License:	GPL v2
 Group:		X11/Applications
 
 %description gui
