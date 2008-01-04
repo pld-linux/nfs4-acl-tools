@@ -15,8 +15,8 @@ URL:		http://www.citi.umich.edu/projects/nfsv4/linux/
 BuildRequires:	attr-devel
 %if %{with gui}
 BuildRequires:	QtGui-devel >= 4.1.4
-BuildRequires:	qt4-build >= 4.1.4
-BuildRequires:	qt4-qmake >= 4.1.4
+BuildRequires:	qt4-build >= 4.3.3-3
+BuildRequires:	qt4-qmake >= 4.3.3-3
 BuildRequires:	rpmbuild(macros) >= 1.167
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -49,7 +49,7 @@ Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4.
 
 %if %{with gui}
 cd GUI/nfs4-acl-editor
-qt4-qmake \
+qmake-qt4 \
 	QMAKE_CXX="%{__cxx}" \
 	QMAKE_CXXFLAGS_RELEASE="%{rpmcxxflags}" \
 	QMAKE_LFLAGS_RELEASE="%{rpmldflags}"
