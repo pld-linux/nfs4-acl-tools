@@ -5,12 +5,13 @@
 Summary:	Command line ACL utilities for the Linux NFSv4 client
 Summary(pl.UTF-8):	Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4
 Name:		nfs4-acl-tools
-Version:	0.3.2
+Version:	0.3.3
 Release:	1
 License:	BSD
 Group:		Applications/System
 Source0:	http://www.citi.umich.edu/projects/nfsv4/linux/nfs4-acl-tools/%{name}-%{version}.tar.gz
-# Source0-md5:	0980000203a102ff6cf2f59b7cbd7dd4
+# Source0-md5:	ece4d5599c3b8470990ee1adbe22e047
+Patch0:		%{name}-strlcpy.patch
 URL:		http://www.citi.umich.edu/projects/nfsv4/linux/
 BuildRequires:	attr-devel
 %if %{with gui}
@@ -30,8 +31,7 @@ Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4.
 %package gui
 Summary:	GUI ACL utility for the Linux NFSv4 client
 Summary(pl.UTF-8):	Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4
-# code itself is BSD, but Qt enforces GPL
-License:	GPL v2
+License:	BSD
 Group:		X11/Applications
 
 %description gui
@@ -42,10 +42,12 @@ Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure
-%{__make}
+%{__make} \
+	OPTIMIZER="%{rpmcflags}"
 
 %if %{with gui}
 cd GUI/nfs4-acl-editor
@@ -72,7 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGELOG COPYING README TODO
+%doc COPYING README TODO
 %attr(755,root,root) %{_bindir}/nfs4_editfacl
 %attr(755,root,root) %{_bindir}/nfs4_getfacl
 %attr(755,root,root) %{_bindir}/nfs4_setfacl

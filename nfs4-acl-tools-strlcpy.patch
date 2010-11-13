@@ -1,0 +1,12 @@
+--- nfs4-acl-tools-0.3.3/GUI/nfs4-acl-editor/nfs4acleditor.cpp.orig	2008-12-03 23:18:24.000000000 +0100
++++ nfs4-acl-tools-0.3.3/GUI/nfs4-acl-editor/nfs4acleditor.cpp	2010-11-13 18:17:58.627103290 +0100
+@@ -569,7 +569,8 @@
+ 		if (i > strlen(ace->who)) {
+ 			dprintf("syncWho(): fromlen %d  tolen %u\n", strlen(ace->who), i);
+ 		}
+-		strlcpy(ace->who, who, NFS4_MAX_PRINCIPALSIZE);
++		strncpy(ace->who, who, NFS4_MAX_PRINCIPALSIZE-1);
++		ace->who[NFS4_MAX_PRINCIPALSIZE-1] = '\0';
+ 	}
+ }
+ 
