@@ -5,15 +5,18 @@
 Summary:	Command line ACL utilities for the Linux NFSv4 client
 Summary(pl.UTF-8):	Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4
 Name:		nfs4-acl-tools
-Version:	0.3.3
+Version:	0.3.4
 Release:	1
 License:	BSD
 Group:		Applications/System
-Source0:	http://www.citi.umich.edu/projects/nfsv4/linux/nfs4-acl-tools/%{name}-%{version}.tar.gz
-# Source0-md5:	ece4d5599c3b8470990ee1adbe22e047
+Source0:	http://linux-nfs.org/~bfields/nfs4-acl-tools/%{name}-%{version}.tar.gz
+# Source0-md5:	b72a83514cae9c754e64c3b266142eec
 Patch0:		%{name}-strlcpy.patch
-URL:		http://www.citi.umich.edu/projects/nfsv4/linux/
+URL:		http://linux-nfs.org/
 BuildRequires:	attr-devel
+BuildRequires:	autoconf >= 2.50
+BuildRequires:	automake
+BuildRequires:	libtool >= 2:1.5
 %if %{with gui}
 BuildRequires:	QtGui-devel >= 4.1.4
 BuildRequires:	qt4-build >= 4.3.3-3
@@ -45,8 +48,11 @@ Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4.
 %patch0 -p1
 
 %build
+%{__aclocal} -I m4
+%{__autoconf}
 %configure
 %{__make} \
+	LIBTOOL="libtool --tag=CC" \
 	OPTIMIZER="%{rpmcflags}"
 
 %if %{with gui}
