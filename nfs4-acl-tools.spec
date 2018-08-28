@@ -3,7 +3,7 @@ Summary:	Command line ACL utilities for the Linux NFSv4 client
 Summary(pl.UTF-8):	Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4
 Name:		nfs4-acl-tools
 Version:	0.3.5
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/System
 Source0:	http://linux-nfs.org/~bfields/nfs4-acl-tools/%{name}-%{version}.tar.gz
@@ -38,7 +38,9 @@ Pliki nagłówkowe i biblioteka statyczna libnfs4acl.
 %build
 %{__aclocal} -I m4
 %{__autoconf}
-%configure
+# libexecdir is used for library installation
+%configure \
+	--libexecdir=%{_libdir}
 # --enable-shared (broken as of 0.3.5, missing "exports" file)
 %{__make} \
 	LIBTOOL="libtool --tag=CC" \
