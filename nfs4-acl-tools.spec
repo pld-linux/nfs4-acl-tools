@@ -1,28 +1,18 @@
-#
-# Conditional build:
-%bcond_without	gui	# Qt4-based ACL editor
-#
+# TODO: shared library when fixed upstream (missing exports file)
 Summary:	Command line ACL utilities for the Linux NFSv4 client
 Summary(pl.UTF-8):	Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4
 Name:		nfs4-acl-tools
-Version:	0.3.4
+Version:	0.3.5
 Release:	1
 License:	BSD
 Group:		Applications/System
 Source0:	http://linux-nfs.org/~bfields/nfs4-acl-tools/%{name}-%{version}.tar.gz
-# Source0-md5:	b72a83514cae9c754e64c3b266142eec
-Patch0:		%{name}-strlcpy.patch
+# Source0-md5:	7d69a96c4d6def3db53151646fbcde65
 URL:		http://linux-nfs.org/
 BuildRequires:	attr-devel
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	libtool >= 2:1.5
-%if %{with gui}
-BuildRequires:	QtGui-devel >= 4.1.4
-BuildRequires:	qt4-build >= 4.3.3-3
-BuildRequires:	qt4-qmake >= 4.3.3-3
-BuildRequires:	rpmbuild(macros) >= 1.167
-%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -31,49 +21,39 @@ Command line ACL utilities for the Linux NFSv4 client.
 %description -l pl.UTF-8
 Narzędzia linii poleceń do ACL dla linuksowego klienta NFSv4.
 
-%package gui
-Summary:	GUI ACL utility for the Linux NFSv4 client
-Summary(pl.UTF-8):	Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4
-License:	BSD
-Group:		X11/Applications
+%package devel
+Summary:	Header files and static libnfs4acl library
+Summary(pl.UTF-8):	Pliki nagłówkowe i biblioteka statyczna libnfs4acl
+Group:		Development/Libraries
 
-%description gui
-GUI ACL utility for the Linux NFSv4 client.
+%description devel
+Header files and static libnfs4acl library.
 
-%description gui -l pl.UTF-8
-Graficzny interfejs użytkownika do ACL dla linuksowego klienta NFSv4.
+%description devel -l pl.UTF-8
+Pliki nagłówkowe i biblioteka statyczna libnfs4acl.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %{__aclocal} -I m4
 %{__autoconf}
 %configure
+# --enable-shared (broken as of 0.3.5, missing "exports" file)
 %{__make} \
 	LIBTOOL="libtool --tag=CC" \
+	LTLDFLAGS="-rpath %{_libdir} -static" \
 	OPTIMIZER="%{rpmcflags}"
-
-%if %{with gui}
-cd GUI/nfs4-acl-editor
-qmake-qt4 \
-	QMAKE_CXX="%{__cxx}" \
-	QMAKE_CXXFLAGS_RELEASE="%{rpmcxxflags}" \
-	QMAKE_LFLAGS_RELEASE="%{rpmldflags}"
-%{__make}
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
+%{__make} install install-dev \
 	DESTDIR=$RPM_BUILD_ROOT \
-	INSTALL_MAN='install -m644 $(MAN_PAGES) $(MAN_DEST)'
+	INSTALL_MAN='install -m644 $(MAN_PAGES) $(MAN_DEST)' \
+	PKG_INC_DIR=$RPM_BUILD_ROOT%{_includedir}
 
-%if %{with gui}
-install GUI/nfs4-acl-editor/nfs4-acl-editor $RPM_BUILD_ROOT%{_bindir}
-%endif
+cp -p include/{libacl_nfs4,nfs4}.h $RPM_BUILD_ROOT%{_includedir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -89,8 +69,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/nfs4_setfacl.1*
 %{_mandir}/man5/nfs4_acl.5*
 
-%if %{with gui}
-%files gui
+%files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/nfs4-acl-editor
-%endif
+%{_libdir}/libnfs4acl.a
+%{_includedir}/libacl_nfs4.h
+%{_includedir}/nfs4.h
